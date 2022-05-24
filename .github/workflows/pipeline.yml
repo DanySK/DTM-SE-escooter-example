@@ -1,0 +1,54 @@
+name: CI/CD
+on:
+  push: # Every time a new commit is pushed
+    branches-ignore: # Except on branches with the following names (bots)
+      - 'renovate/**'
+      - 'dependabot/**'
+    paths-ignore: # Or if the commit is only related to these files
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - 'README.md'
+      - 'renovate.json'
+      - '.gitignore'
+  pull_request: # Always run if there is a pull request
+  workflow_dispatch: # Enable launching the pipeline from the web interface
+
+jobs:
+
+  Build-Backend:
+    runs-on: ubuntu-latest # Pick a Linux machine
+    steps:
+      - name: Checkout the repository
+        # There is a ready-to-use action for that!
+        uses: actions/checkout@v3.0.2
+      - name: Read the version of Python
+        # We need an id for the step, as we will use its outpot later on
+        id: python-version
+        # I couldn't find a ready-to-use action, so let's write the necessary steps
+        # The will be executed on the selected shell
+        shell: bash
+        # Similar to "cd backend", runs the commands inside that folder
+        working-directory: backend
+        # Read the file and set its content as output of this step
+        run: echo "::set-output name=version::$(cat .python-version)"
+      - name: Install Python
+        # There is a ready-to-use action for that!
+        uses: actions/setup-python@v3.1.2
+        with:
+          python-version: ${{ steps.python-version.outputs.version }}
+      - name: Install Poetry
+        # There is a ready-to-use action for that!
+        uses: snok/install-poetry@v1.3.1
+      - name: Install dependencies
+        shell: bash
+        working-directory: backend
+        # Let's set the environment variable used by Flask App
+        run: poetry install
+      - name: Run unit tests
+        shell: bash
+        working-directory: backend
+        run: poetry run pytest
+      - name: Run the end to end test
+        shell: bash
+        working-directory: backend
+        run: ./end-to-end-test.sh
