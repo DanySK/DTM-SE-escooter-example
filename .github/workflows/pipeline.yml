@@ -52,3 +52,57 @@ jobs:
         shell: bash
         working-directory: backend
         run: ./end-to-end-test.sh
+
+  Build-Frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install all dependencies
+        working-directory: frontend
+        run: npm install
+      - name: Run the tests
+        shell: bash
+        working-directory: frontend
+        run: npm test -- --watchAll=false
+
+  Build-Agents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Just skip, as there are no agents yet
+        run: true
+
+  Integration-Testing:
+    needs:
+      - Build-Backend
+      - Build-Frontend
+      - Build-Agents
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Containerize the backend
+        run: docker build -t escooter-backend backend
+      - name: Prepare the frontend
+        working-directory: frontend
+        run: npm install
+      - name: Containerize the agents
+        run: true # no agents yet
+      - name: Run the integration test
+        run: true # Start the backend, start the agents, perform an interaction
+
+  Deploy:
+    needs:
+      - Integration-Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Containerize the backend
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-backend:latest backend
+      - name: Login to the container registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
+      - name: Deliver backend on registry
+        run: docker push ghcr.io/danysk/dtm-se-escooter-example-backend:latest
