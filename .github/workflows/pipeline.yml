@@ -67,6 +67,20 @@ jobs:
         working-directory: user-app
         run: npm test -- --watchAll=false
 
+  Build-Company-Dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install all dependencies
+        shell: bash
+        working-directory: company-dashboard
+        run: npm install
+      - name: Run the tests
+        shell: bash
+        working-directory: company-dashboard
+        run: npm test -- --watchAll=false
+
   Build-Account-Service:
     runs-on: ubuntu-latest
     steps:
@@ -137,13 +151,16 @@ jobs:
         uses: actions/checkout@v3.0.2
       - name: Containerize the backend
         run: docker build -t escooter-service escooter-service
-      - name: Prepare the frontend
-        working-directory: user-app
-        run: npm install
       - name: Containerize the account service
         run: docker build -t account-service account-service
       - name: Containerize the renting service
         run: docker build -t renting-service renting-service
+      - name: Prepare the frontend
+        working-directory: user-app
+        run: npm install
+      - name: Prepare the dashboard
+        working-directory: company-dashboard
+        run: npm install
       - name: Run the integration test
         run: true # Start the backend, start the agents, perform some interactions
 
