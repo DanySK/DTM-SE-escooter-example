@@ -196,7 +196,7 @@ jobs:
     if: >- # Multiline YAML string where newlines get replaced with spaces
       contains(github.repository, 'DanySK/DTM-SE-escooter-example')
         && contains('push workflow_dispatch', github.event_name)
-        && contains('master', github.ref)
+        && contains(github.ref, 'master')
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
