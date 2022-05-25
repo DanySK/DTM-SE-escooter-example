@@ -116,8 +116,7 @@ jobs:
         working-directory: user-app
         run: npm install
       - name: Containerize the account service
-        working-directory: account-service
-        run: true
+        run: docker build -t account-service account-service
       - name: Run the integration test
         run: true # Start the backend, start the agents, perform some interactions
 
@@ -130,7 +129,11 @@ jobs:
         uses: actions/checkout@v3.0.2
       - name: Containerize the backend
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest escooter-service
+      - name: Containerize the account service
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-account-service:latest account-service
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver backend on registry
-        run: docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest
+        run: |
+          docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-account-service:latest
