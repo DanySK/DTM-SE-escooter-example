@@ -168,6 +168,13 @@ jobs:
     needs:
       - Integration-Testing
     runs-on: ubuntu-latest
+    # Deploy only on the main repository (forks cannot deploy!)
+    # Deploy only on new pushes or workflows triggered manually (pull requests cannot access the secrets)
+    # Deploy only from the stable branch
+    if: >- # Multiline YAML string where newlines get replaced with spaces
+      contains(github.repository, 'DanySK/DTM-SE-escooter-example')
+        && contains('push workflow_dispatch', github.event_name)
+        && contains('master', github.ref)
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
