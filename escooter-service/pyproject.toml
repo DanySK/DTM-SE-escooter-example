@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "escooter-backend"
+name = "escooter-service"
 version = "0.1.0"
 description = "Backend for the e-scooter application"
 authors = ["Danilo Pianini <danilo.pianini@unibo.it>", "Alessandro Ricci <aricci@unibo.it>"]

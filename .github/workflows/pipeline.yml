@@ -28,7 +28,7 @@ jobs:
         # The will be executed on the selected shell
         shell: bash
         # Similar to "cd backend", runs the commands inside that folder
-        working-directory: backend
+        working-directory: escooter-service
         # Read the file and set its content as output of this step
         run: echo "::set-output name=version::$(cat .python-version)"
       - name: Install Python
@@ -41,16 +41,16 @@ jobs:
         uses: snok/install-poetry@v1.3.1
       - name: Install dependencies
         shell: bash
-        working-directory: backend
+        working-directory: escooter-service
         # Let's set the environment variable used by Flask App
         run: poetry install
       - name: Run unit tests
         shell: bash
-        working-directory: backend
+        working-directory: escooter-service
         run: poetry run pytest
       - name: Run the end to end test
         shell: bash
-        working-directory: backend
+        working-directory: escooter-service
         run: ./end-to-end-test.sh
 
   Build-Frontend:
@@ -84,7 +84,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
       - name: Containerize the backend
-        run: docker build -t escooter-backend backend
+        run: docker build -t escooter-service escooter-service
       - name: Prepare the frontend
         working-directory: frontend
         run: npm install
@@ -101,7 +101,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
       - name: Containerize the backend
-        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-backend:latest backend
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-backend:latest escooter-service
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver backend on registry
