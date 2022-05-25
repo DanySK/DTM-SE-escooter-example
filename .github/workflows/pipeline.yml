@@ -92,6 +92,31 @@ jobs:
           # (it is a graceful shutdown, "kill" sends a TERM signal by default)
           kill $PID
 
+  Build-Renting-Service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install all dependencies
+        working-directory: renting-service
+        shell: bash
+        run: npm install
+      - name: Run the tests
+        shell: bash
+        working-directory: renting-service
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:3000
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
+
   Build-Agents:
     runs-on: ubuntu-latest
     steps:
@@ -117,6 +142,8 @@ jobs:
         run: npm install
       - name: Containerize the account service
         run: docker build -t account-service account-service
+      - name: Containerize the renting service
+        run: docker build -t renting-service renting-service
       - name: Run the integration test
         run: true # Start the backend, start the agents, perform some interactions
 
@@ -131,9 +158,12 @@ jobs:
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest escooter-service
       - name: Containerize the account service
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-account-service:latest account-service
+      - name: Containerize the renting service
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest renting-service
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver backend on registry
         run: |
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-account-service:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest
