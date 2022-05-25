@@ -59,12 +59,38 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
       - name: Install all dependencies
+        shell: bash
         working-directory: user-app
         run: npm install
       - name: Run the tests
         shell: bash
         working-directory: user-app
         run: npm test -- --watchAll=false
+
+  Build-Account-Service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install all dependencies
+        working-directory: account-service
+        shell: bash
+        run: npm install
+      - name: Run the tests
+        shell: bash
+        working-directory: account-service
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:3000
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
 
   Build-Agents:
     runs-on: ubuntu-latest
@@ -79,6 +105,7 @@ jobs:
       - Build-Backend
       - Build-User-App
       - Build-Agents
+      - Build-Account-Service
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -86,12 +113,13 @@ jobs:
       - name: Containerize the backend
         run: docker build -t escooter-service escooter-service
       - name: Prepare the frontend
-        working-directory: frontend
+        working-directory: user-app
         run: npm install
-      - name: Containerize the agents
-        run: true # no agents yet
+      - name: Containerize the account service
+        working-directory: account-service
+        run: true
       - name: Run the integration test
-        run: true # Start the backend, start the agents, perform an interaction
+        run: true # Start the backend, start the agents, perform some interactions
 
   Deploy:
     needs:
@@ -101,8 +129,8 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
       - name: Containerize the backend
-        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-backend:latest escooter-service
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest escooter-service
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver backend on registry
-        run: docker push ghcr.io/danysk/dtm-se-escooter-example-backend:latest
+        run: docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest
