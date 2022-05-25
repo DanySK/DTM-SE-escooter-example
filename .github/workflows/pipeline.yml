@@ -131,20 +131,40 @@ jobs:
           # (it is a graceful shutdown, "kill" sends a TERM signal by default)
           kill $PID
 
-  Build-Agents:
+  Build-Agent:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
-      - name: Just skip, as there are no agents yet
-        run: true
+      - name: Read the version of Python
+        id: python-version
+        shell: bash
+        working-directory: escooter-agent
+        run: echo "::set-output name=version::$(cat .python-version)"
+      - name: Install Python
+        uses: actions/setup-python@v3.1.2
+        with:
+          python-version: ${{ steps.python-version.outputs.version }}
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.3.1
+      - name: Install dependencies
+        shell: bash
+        working-directory: escooter-agent
+        run: poetry install
+      - name: Run unit tests
+        shell: bash
+        working-directory: escooter-agent
+        # We use unittest here instead of pytest, just to show one more framework
+        run: poetry run python -m unittest discover
 
   Integration-Testing:
     needs:
       - Build-Backend
       - Build-User-App
-      - Build-Agents
+      - Build-Company-Dashboard
+      - Build-Agent
       - Build-Account-Service
+      - Build-Renting-Service
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -155,6 +175,8 @@ jobs:
         run: docker build -t account-service account-service
       - name: Containerize the renting service
         run: docker build -t renting-service renting-service
+      - name: Containerize the scooter agent
+        run: docker build -t escooter-agent escooter-agent
       - name: Prepare the frontend
         working-directory: user-app
         run: npm install
@@ -184,6 +206,8 @@ jobs:
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-account-service:latest account-service
       - name: Containerize the renting service
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest renting-service
+      - name: Containerize the escooter agent
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest escooter-agent
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver backend on registry
@@ -191,3 +215,4 @@ jobs:
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-account-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest
