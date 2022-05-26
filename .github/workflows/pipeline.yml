@@ -210,7 +210,7 @@ jobs:
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest escooter-agent
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
-      - name: Deliver backend on registry
+      - name: Deliver images on registry
         run: |
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-account-service:latest
