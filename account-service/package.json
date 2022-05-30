@@ -4,6 +4,7 @@
   "description": "DTM wrap-up project - account service",
   "main": "account-service.js",
   "scripts": {
+    "start": "node account-service.js",
     "test": "echo \"WARNING: no unit test specified\""
   },
   "dependencies": {
