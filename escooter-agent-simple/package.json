@@ -1,8 +1,8 @@
 {
-  "name": "account-service",
+  "name": "escooter agent",
   "version": "1.0.0",
-  "description": "DTM wrap-up project - account service",
-  "main": "account-service.js",
+  "description": "DTM wrap-up project - escooter agent",
+  "main": "escooter-agent.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,7 @@
     "axios": "^0.21.4",
     "body-parser": "^1.20.0",
     "express": "^4.18.1",
+    "geolib": "^3.3.3",
     "mongoose": "^5.13.14",
     "nodemon": "^2.0.16"
   }

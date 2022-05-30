@@ -1,0 +1,428 @@
+{
+	"info": {
+		"_postman_id": "a0025351-19fe-40ef-b6ca-1800d78abf5c",
+		"name": "DTM wrap-up project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1321309"
+	},
+	"item": [
+		{
+			"name": "register new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Charles\",\n    \"surname\": \"Bukowski\",\n    \"username\": \"cbukowski\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/accounts",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all accounts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5050/accounts",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register a new escooter",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"escooter-002\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5060/escooters",
+					"host": [
+						"localhost"
+					],
+					"port": "5060",
+					"path": [
+						"escooters"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get escooters list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5060/escooters",
+					"host": [
+						"localhost"
+					],
+					"port": "5060",
+					"path": [
+						"escooters"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get escooter state",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5060/escooters/escooter-001",
+					"host": [
+						"localhost"
+					],
+					"port": "5060",
+					"path": [
+						"escooters",
+						"escooter-001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unlock an escooter",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:5060/escooters/escooter-001/actions/unlock",
+					"host": [
+						"localhost"
+					],
+					"port": "5060",
+					"path": [
+						"escooters",
+						"escooter-001",
+						"actions",
+						"unlock"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lock an escooter",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:5060/escooters/escooter-001/actions/unlock",
+					"host": [
+						"localhost"
+					],
+					"port": "5060",
+					"path": [
+						"escooters",
+						"escooter-001",
+						"actions",
+						"unlock"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sync the DT with the physical state of escooter",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"pos\": { \"lat\": 44.14842, \"lng\": 12.23573 },\n    \"batteryLevel\": 75\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5060/escooters/escooter-001/actions/sync",
+					"host": [
+						"localhost"
+					],
+					"port": "5060",
+					"path": [
+						"escooters",
+						"escooter-001",
+						"actions",
+						"sync"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all rents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5070/rents",
+					"host": [
+						"localhost"
+					],
+					"port": "5070",
+					"path": [
+						"rents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Starting a new rent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"amerini\",\n    \"escooterId\": \"escooter-001\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5070/rents",
+					"host": [
+						"localhost"
+					],
+					"port": "5070",
+					"path": [
+						"rents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Getting rent info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost5070/rents/rent-1",
+					"host": [
+						"localhost5070"
+					],
+					"path": [
+						"rents",
+						"rent-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "End renting",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:5070/rents/rent-1/actions/end",
+					"host": [
+						"localhost"
+					],
+					"port": "5070",
+					"path": [
+						"rents",
+						"rent-1",
+						"actions",
+						"end"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Notifying events to the escooter agent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"event\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5100/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5100",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Configuring EScooter Device ID",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"escooterId\": \"escooter-001\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5100/id ",
+					"host": [
+						"localhost"
+					],
+					"port": "5100",
+					"path": [
+						"id "
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Turn on EScooter device",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"event\": \"turn-on-request\",\n    \"content\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5100/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5100",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Turn off EScooter device",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:5100/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5100",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Activate Automode Driving",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"event\": \"activate-automode-request\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5100/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5100",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stop automode",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"event\": \"stop-automode-request\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5100/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5100",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

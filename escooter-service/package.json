@@ -1,8 +1,8 @@
 {
-  "name": "account-service",
+  "name": "escooter service",
   "version": "1.0.0",
-  "description": "DTM wrap-up project - account service",
-  "main": "account-service.js",
+  "description": "DTM wrap-up project - escooter service",
+  "main": "escooter-service.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
