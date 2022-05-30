@@ -1,6 +1,6 @@
 {
   "name": "account-service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "DTM wrap-up project - account service",
   "main": "account-service.js",
   "scripts": {
