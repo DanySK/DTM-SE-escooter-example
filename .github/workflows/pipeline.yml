@@ -72,6 +72,21 @@ jobs:
         shell: bash
         working-directory: company-dashboard
         run: npm test -- --watchAll=false
+      - name: Try the server
+        shell: bash
+        working-directory: company-dashboard
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:5200
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
 
   Build-Account-Service:
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
 {
   "name": "company-dashboard",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "DTM wrap-up project - company dashboard ",
   "main": "app.js",
   "scripts": {
