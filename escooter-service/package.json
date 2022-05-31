@@ -1,6 +1,6 @@
 {
   "name": "escooter service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "DTM wrap-up project - escooter service",
   "main": "escooter-service.js",
   "scripts": {
