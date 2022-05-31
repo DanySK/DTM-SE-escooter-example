@@ -1,10 +1,11 @@
 {
   "name": "Renting service",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "DTM wrap-up project - renting service",
   "main": "renting-service.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node renting-service.js",
+    "test": "echo \"WARNING: no unit test specified\""
   },
   "dependencies": {
     "axios": "^0.21.4",
