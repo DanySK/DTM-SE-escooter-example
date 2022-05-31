@@ -84,7 +84,7 @@ jobs:
         run: npm install
       - name: Run the unit tests
         shell: bash
-        working-directory: company-dashboard
+        working-directory: account-service
         run: npm test -- --watchAll=false
       - name: Try the server
         shell: bash
@@ -113,7 +113,7 @@ jobs:
         run: npm install
       - name: Run the unit tests
         shell: bash
-        working-directory: company-dashboard
+        working-directory: renting-service
         run: npm test -- --watchAll=false
       - name: Try the server
         shell: bash
