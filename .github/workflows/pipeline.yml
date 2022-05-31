@@ -206,6 +206,8 @@ jobs:
       - Build-Renting-Service
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
       - name: Launch docker-compose
         run: |
           docker-compose up &
