@@ -1,11 +1,8 @@
 FROM node:18-alpine
 WORKDIR /root
 COPY package*.json ./
-COPY app.js .
-COPY bin bin
-COPY routes routes
-COPY views views
+COPY *.js ./
 RUN npm install
-EXPOSE 3000
+EXPOSE 5050
 ENTRYPOINT [ "npm" ]
 CMD [ "start" ]
