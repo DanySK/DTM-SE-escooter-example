@@ -24,14 +24,23 @@ let events = []
 /* keeping track of agent cycle number */ 
 let currentCycle = 0;
 
-/* configuring agent periodic behaviour:
-   doing an execution cycle every PERIOD milliseconds */
-let timerId = setInterval(() => doExecutionCycle(), PERIOD);
 
 /* current perceived event */
 let perceivedEvent = null;
 
-/* agent main execution cycle, called periodically */
+/* AGENT EXECUTION CYCLE ENGINE */
+
+/* 
+ * Configuring agent periodic behaviour:
+ *  doing an execution cycle every PERIOD milliseconds 
+ */
+let timerId = setInterval(() => {
+	doExecutionCycle()
+}, PERIOD);
+
+/* 
+ * Agent main execution cycle, called periodically 
+ */
 async function doExecutionCycle() {
 	currentCycle++
 	perceivedEvent = null;
@@ -41,11 +50,13 @@ async function doExecutionCycle() {
 	doStep();
 }
 
+
 /* --------------------------------------------------------------------- */
 
 /* Agent business logic */
 
 const AgentState = {
+	INIT: 'Init',
 	IDLE: 'Idle',
 	DRIVING: 'Driving',
 	AUTOMODE: 'Automode'
@@ -53,8 +64,8 @@ const AgentState = {
 
 let lastSyncTime = 0;
 let currentState = AgentState.IDLE;
-let targetPosIndex = 0
-
+let targetPosIndex = 1
+					
 const autoModePath = [
 	{ latitude: 44.147714661894824, longitude: 12.236237997962611 },
 	{ latitude: 44.14402476949777, longitude: 12.239347039196907 },
@@ -65,13 +76,31 @@ const autoModePath = [
 /*  Main function defining agent behaviour at each cycle */
 /*  It is a finite state machine */
 
-function doStep(){
+async function doStep(){
 	checkSync()
 	switch (currentState) {
+		case AgentState.INIT:
+			model.getEScooterDevice().setPos(autoModePath[0])
+			currentState = AgentState.IDLE
+			break;
 		case AgentState.IDLE:
 			if (perceivedEvent != null && perceivedEvent.event == "turn-on-request"){
-				model.getEScooterDevice().turnOn()	
-				currentState = AgentState.DRIVING
+
+				const escooterURI = "http://localhost:5060/escooters/" + model.getEScooterDevice().getId();
+				const resp = await axios.get(escooterURI)
+				
+				if (resp.status === 200) {
+					let state = resp.data.serviceState;
+					// if (state  == "in-service:not-available:in-use"){
+						model.getEScooterDevice().turnOn()	
+						currentState = AgentState.DRIVING
+					/* } else {
+						console.log("turn-on-request failed (escooter not locked)");
+					}*/
+				} else {
+					console.log("turn-on-request failed (escooter not available)");
+				}
+		
 			}
 		break;
 		case AgentState.DRIVING:
@@ -81,8 +110,7 @@ function doStep(){
 					currentState = AgentState.IDLE
 				} else if (perceivedEvent.event == "activate-automode-request"){
 					currentState = AgentState.AUTOMODE
-					model.getEScooterDevice().setPos(autoModePath[0])
-					targetPosIndex = 1
+					console.log("moving in automode")
 				}
 			}
 		break;
@@ -90,7 +118,6 @@ function doStep(){
 			if  (perceivedEvent != null && perceivedEvent.event == "stop-automode-request"){
 				currentState = AgentState.DRIVING
 			} else {
-				console.log("moving in automode")
 				let targetPos = autoModePath[targetPosIndex]
 				if (reached(targetPos)){
 					targetPosIndex = (targetPosIndex + 1) % autoModePath.length
@@ -188,6 +215,5 @@ app.listen(PORT, () => {
 	console.log("E-Scooter agent up and running - listening on port " + PORT)
 })
 
-/* Agent behaviour */
 
 

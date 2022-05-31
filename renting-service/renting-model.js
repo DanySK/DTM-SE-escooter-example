@@ -55,6 +55,7 @@ class Renting {
 	endOngoingRent(rentId){
 		let rent = this.rents.get(rentId)
 		if (rent != undefined){
+			this.log("ending an ongoing rent: " + rentId);
 			rent.endRenting()
 		} else {
 			throw 'rent not found'

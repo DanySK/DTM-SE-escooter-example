@@ -18,6 +18,10 @@ class EScooterDT {
 		}
 	}
 
+	getState(){
+		return this.state
+	}
+
 	unlock() {
 		if (this.serviceState == EScooterDT.IN_SERVICE_AVAILABLE){
 			this.serviceState = EScooterDT.IN_SERVICE_NOT_AVAILABLE_IN_USE;
@@ -58,7 +62,6 @@ class EScooters {
 	constructor() {
       this.scooters = new Map()
 	  this.scooters.set("escooter-001", new EScooterDT("escooter-001"))
-	  this.scooters.set("escooter-002", new EScooterDT("escooter-002"))
 	}
 
 	registerNewEScooter(id){

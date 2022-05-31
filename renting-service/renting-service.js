@@ -1,4 +1,3 @@
-// Load express
 const express  = require("express");
 const app = express()
 
@@ -39,8 +38,6 @@ app.get("/rents/:uid",async (req, res) => {
 
 app.post("/rents", async (req, res) => {
 	try {
-		console.log("POST start new rent " + JSON.stringify(req.body))
-
 		/* try to unlock the escooter */
 		const escooterURI = "http://localhost:5060/escooters/" + req.body.escooterId;
 		const unlockResponse = await axios.post(escooterURI + "/actions/unlock")
@@ -60,10 +57,7 @@ app.post("/rents", async (req, res) => {
 
 app.post("/rents/:uid/actions/end",async (req, res) => {
 	try {
-		console.log("POST end renting  " + req.params.uid);
-
-		const rent = model.getRentingModel().getRentById(req.params.uid);
-		
+		const rent = model.getRentingModel().getRentById(req.params.uid);		
 		if (rent != undefined){ 
 			/* try to lock the escooter */
 			const escooterURI = "http://localhost:5060/escooters/" + rent.escooterId;

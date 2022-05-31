@@ -11,9 +11,9 @@ const axios = require("axios");
 
 const { resetWatchers } = require("nodemon/lib/monitor/watch");
 
-const PORT  = 5050
+/* --------------------------------------------------------------------- */
 
-/* importing the model */
+const PORT  = 5050
 
 var model = require('./account-model');
 

@@ -23,6 +23,20 @@ app.get("/escooters",async (req, res) => {
 	res.send(model.getEScooterModel().getAllEScooters())
 })
 
+app.get("/escooters/state",async (req, res) => {
+	let escootersInfo = []
+	model.getEScooterModel().getAllEScooters().forEach( id => {
+		const sc = model.getEScooterModel().getEScooterById(id)
+		escootersInfo.push({
+			id: sc.id,
+			serviceState: sc.serviceState,
+			deviceState: sc.deviceState
+		})
+	})
+	res.send(JSON.stringify(escootersInfo))
+})
+
+
 /* Register a new e-scooter */
 
 app.post("/escooters", async (req, res) => {
@@ -40,7 +54,11 @@ app.post("/escooters", async (req, res) => {
 app.get("/escooters/:uid",async (req, res) => {
 	try {
 		sc = model.getEScooterModel().getEScooterById(req.params.uid)
-		res.send("E-Scooter: " + JSON.stringify(sc))
+		res.send({
+			"id": sc.id,
+			"serviceState": sc.serviceState,
+			"deviceState": sc.deviceState
+		})
 	} catch (e){
 		res.sendStatus(404)
 	}
