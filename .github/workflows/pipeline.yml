@@ -44,7 +44,6 @@ jobs:
           # (it is a graceful shutdown, "kill" sends a TERM signal by default)
           kill $PID
 
-
   Build-User-App:
     runs-on: ubuntu-latest
     steps:
@@ -146,7 +145,31 @@ jobs:
           # (it is a graceful shutdown, "kill" sends a TERM signal by default)
           kill $PID
 
-  Build-Agent:
+  Build-Escooter-Agent-Simple:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install all dependencies
+        working-directory: escooter-agent-simple
+        shell: bash
+        run: npm install
+      - name: Run the unit tests
+        shell: bash
+        working-directory: escooter-agent-simple
+        run: npm test -- --watchAll=false
+      - name: Try the server
+        shell: bash
+        working-directory: escooter-agent-simple
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL http://127.0.0.1:5100
+          kill $PID
+
+  Build-Escooter-Agent:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -177,29 +200,23 @@ jobs:
       - Build-Escooter-Service
       - Build-User-App
       - Build-Company-Dashboard
-      - Build-Agent
+      - Build-Escooter-Agent
+      - Build-Escooter-Agent-Simple
       - Build-Account-Service
       - Build-Renting-Service
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3.0.2
-      - name: Containerize the backend
-        run: docker build -t escooter-service escooter-service
-      - name: Containerize the account service
-        run: docker build -t account-service account-service
-      - name: Containerize the renting service
-        run: docker build -t renting-service renting-service
-      - name: Containerize the scooter agent
-        run: docker build -t escooter-agent escooter-agent
-      - name: Prepare the frontend
-        working-directory: user-app
-        run: npm install
-      - name: Prepare the dashboard
-        working-directory: company-dashboard
-        run: npm install
-      - name: Run the integration test
-        run: true # Start the backend, start the agents, perform some interactions
+      - name: Launch docker-compose
+        run: |
+          docker-compose up &
+          PID="$( echo $! )"
+          sleep 60
+          curl -sL http://127.0.0.1:5050
+          curl -sL http://127.0.0.1:5060
+          curl -sL http://127.0.0.1:5070
+          curl -sL http://127.0.0.1:5100
+          curl -sL http://127.0.0.1:5200
+          kill $PID
 
   Deploy:
     needs:
@@ -223,6 +240,10 @@ jobs:
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest renting-service
       - name: Containerize the escooter agent
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest escooter-agent
+      - name: Containerize the escooter agent simple
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent-simple:latest escooter-agent-simple
+      - name: Containerize the company dashboard
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-company-dashboard:latest company-dashboard
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver images on registry
@@ -231,3 +252,5 @@ jobs:
           docker push ghcr.io/danysk/dtm-se-escooter-example-account-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent-simple:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-company-dashboard:latest

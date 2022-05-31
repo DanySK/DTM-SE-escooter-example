@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  account-service:
+    build: account-service
+    ports:
+      - "5050:5050"
+  escooter-service:
+    build: escooter-service
+    ports:
+      - "5060:5060"
+  renting-service:
+    build: renting-service
+    ports:
+      - "5070:5070"
+  escooter-agent-simple:
+    build: escooter-agent-simple
+    ports:
+      - "5100:5100"
+  company-dashboard:
+    build: company-dashboard
+    ports:
+      - "5200:5200"
