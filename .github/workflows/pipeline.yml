@@ -54,7 +54,7 @@ jobs:
         shell: bash
         working-directory: user-app
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
         shell: bash
         working-directory: user-app
         run: npm test -- --watchAll=false
@@ -68,7 +68,7 @@ jobs:
         shell: bash
         working-directory: company-dashboard
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
         shell: bash
         working-directory: company-dashboard
         run: npm test -- --watchAll=false
@@ -82,7 +82,11 @@ jobs:
         working-directory: account-service
         shell: bash
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
+        shell: bash
+        working-directory: company-dashboard
+        run: npm test -- --watchAll=false
+      - name: Try the server
         shell: bash
         working-directory: account-service
         # There are no tests yet, so let's just make sure that the server starts
@@ -107,7 +111,11 @@ jobs:
         working-directory: renting-service
         shell: bash
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
+        shell: bash
+        working-directory: company-dashboard
+        run: npm test -- --watchAll=false
+      - name: Try the server
         shell: bash
         working-directory: renting-service
         # There are no tests yet, so let's just make sure that the server starts
