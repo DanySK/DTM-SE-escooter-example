@@ -15,43 +15,35 @@ on:
 
 jobs:
 
-  Build-Backend:
+  Build-Escooter-Service:
     runs-on: ubuntu-latest # Pick a Linux machine
     steps:
       - name: Checkout the repository
-        # There is a ready-to-use action for that!
         uses: actions/checkout@v3.0.2
-      - name: Read the version of Python
-        # We need an id for the step, as we will use its outpot later on
-        id: python-version
-        # I couldn't find a ready-to-use action, so let's write the necessary steps
-        # The will be executed on the selected shell
-        shell: bash
-        # Similar to "cd backend", runs the commands inside that folder
-        working-directory: escooter-service
-        # Read the file and set its content as output of this step
-        run: echo "::set-output name=version::$(cat .python-version)"
-      - name: Install Python
-        # There is a ready-to-use action for that!
-        uses: actions/setup-python@v3.1.2
-        with:
-          python-version: ${{ steps.python-version.outputs.version }}
-      - name: Install Poetry
-        # There is a ready-to-use action for that!
-        uses: snok/install-poetry@v1.3.1
-      - name: Install dependencies
+      - name: Install all dependencies
         shell: bash
         working-directory: escooter-service
-        # Let's set the environment variable used by Flask App
-        run: poetry install
-      - name: Run unit tests
+        run: npm install
+      - name: Run the unit tests
         shell: bash
         working-directory: escooter-service
-        run: poetry run pytest
-      - name: Run the end to end test
+        run: npm test -- --watchAll=false
+      - name: Check that the service can run
         shell: bash
         working-directory: escooter-service
-        run: ./end-to-end-test.sh
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:5060
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
+
 
   Build-User-App:
     runs-on: ubuntu-latest
@@ -159,7 +151,7 @@ jobs:
 
   Integration-Testing:
     needs:
-      - Build-Backend
+      - Build-Escooter-Service
       - Build-User-App
       - Build-Company-Dashboard
       - Build-Agent
