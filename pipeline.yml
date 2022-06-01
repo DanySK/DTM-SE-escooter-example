@@ -24,6 +24,25 @@ jobs:
           kill "$PID"
 
 jobs:
+  test-company-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: company-dashboard
+        run: npm install 
+      - name: Unit testing
+      - name: Launch the service
+        working-directory: company-dashboard
+        run: 
+          npm start &
+          PID = "$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5200/"
+          kill "$PID"
+
+jobs:
   test-escooter-service:
     runs-on: ubuntu-latest
     steps:
