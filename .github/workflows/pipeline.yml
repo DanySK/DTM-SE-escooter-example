@@ -110,12 +110,18 @@ jobs:
     needs:
       - test-account-service
       - test-company-dashboard
+      - test-escooter-agent-simple
       - test-escooter-service
-      - test-escooter-simple-agent
+      - test-renting-service
     runs-on: ubuntu-latest
     steps:
-      - run: true
-    
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Containerize account service
+        run: docker build account-service -t account-service
+      - name: Containerize the company dashboard
+        run: docker build company-dashboard -t company-dashboard
+
   deployment:
     needs:
       - integration-testing
