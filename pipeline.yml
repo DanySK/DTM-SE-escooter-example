@@ -13,3 +13,6 @@ jobs:
       - name: Install the dependencies
         working-directory: account-service
         run: npm install 
+      - name: Launch the service
+        working-directory: account-service
+        run: 
