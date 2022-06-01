@@ -13,3 +13,11 @@ jobs:
       - name: Install the dependencies
         working-directory: account-service
         run: npm install
+      - name: Launch the service
+        working-directory: account-service
+        run: |
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5050/"
+          kill "$PID"
