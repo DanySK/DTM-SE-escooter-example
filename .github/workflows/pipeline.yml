@@ -1,0 +1,124 @@
+name: CI/CD
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  test-account-service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: account-service
+        run: npm install
+      - name: Unit testing
+        working-directory: account-service
+        run: npm test
+      - name: Launch the service
+        working-directory: account-service
+        run: |
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5050/"
+          kill "$PID"
+
+  test-company-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: company-dashboard
+        run: npm install
+      - name: Unit testing
+        working-directory: company-dashboard
+        run: npm test
+      - name: Launch the service
+        working-directory: company-dashboard
+        run: |
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5200/"
+          kill "$PID"
+
+  test-escooter-agent-simple:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: escooter-agent-simple
+        run: npm install
+      - name: Unit testing
+        working-directory: escooter-agent-simple
+        run: npm test
+      - name: Launch the service
+        working-directory: escooter-agent-simple
+        run: |
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5100/"
+          kill "$PID"
+
+  test-escooter-service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: escooter-service
+        run: npm install
+      - name: Unit testing
+        working-directory: escooter-service
+        run: npm test
+      - name: Launch the service
+        working-directory: escooter-service
+        run: |
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5060/"
+          kill "$PID"
+
+  test-renting-service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: renting-service
+        run: npm install
+      - name: Unit testing
+        working-directory: renting-service
+        run: npm test
+      - name: Launch the service
+        working-directory: renting-service
+        run: |
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5070/"
+          kill "$PID"
+
+  integration-testing:
+    needs:
+      - test-account-service
+      - test-company-dashboard
+      - test-escooter-service
+      - test-escooter-simple-agent
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
+    
+  deployment:
+    needs:
+      - integration-testing
+    runs-on: ubuntu-latest
+    steps:
+      - run: true
