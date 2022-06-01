@@ -1,8 +1,8 @@
-FROM node:18-alpine
-WORKDIR /root
-COPY package*.json ./
+FROM node:18.2.0-alpine3.14
+WORKDIR /service
 COPY *.js ./
+COPY *.json ./
+COPY public/* public/
 RUN npm install
-EXPOSE 5200
 ENTRYPOINT [ "npm" ]
 CMD [ "start" ]

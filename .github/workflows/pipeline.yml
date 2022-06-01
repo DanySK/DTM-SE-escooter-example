@@ -119,6 +119,8 @@ jobs:
         uses: actions/checkout@v3.0.2
       - name: Containerize account service
         run: docker build account-service -t account-service
+      - name: Containerize the company dashboard
+        run: docker build company-dashboard -t company-dashboard
 
   deployment:
     needs:
