@@ -227,7 +227,7 @@ jobs:
         run: |
           docker-compose up &
           PID="$( echo $! )"
-          sleep 60
+          sleep 120
           curl -sL http://127.0.0.1:5050
           curl -sL http://127.0.0.1:5060
           curl -sL http://127.0.0.1:5070
