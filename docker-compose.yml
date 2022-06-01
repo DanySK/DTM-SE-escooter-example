@@ -20,3 +20,7 @@ services:
     build: company-dashboard
     ports:
       - "5200:5200"
+  user-app:
+    build: user-app
+    ports:
+      - "5300:5300"
