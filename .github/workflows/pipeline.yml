@@ -15,43 +15,34 @@ on:
 
 jobs:
 
-  Build-Backend:
+  Build-Escooter-Service:
     runs-on: ubuntu-latest # Pick a Linux machine
     steps:
       - name: Checkout the repository
-        # There is a ready-to-use action for that!
         uses: actions/checkout@v3.0.2
-      - name: Read the version of Python
-        # We need an id for the step, as we will use its outpot later on
-        id: python-version
-        # I couldn't find a ready-to-use action, so let's write the necessary steps
-        # The will be executed on the selected shell
-        shell: bash
-        # Similar to "cd backend", runs the commands inside that folder
-        working-directory: escooter-service
-        # Read the file and set its content as output of this step
-        run: echo "::set-output name=version::$(cat .python-version)"
-      - name: Install Python
-        # There is a ready-to-use action for that!
-        uses: actions/setup-python@v3.1.2
-        with:
-          python-version: ${{ steps.python-version.outputs.version }}
-      - name: Install Poetry
-        # There is a ready-to-use action for that!
-        uses: snok/install-poetry@v1.3.1
-      - name: Install dependencies
+      - name: Install all dependencies
         shell: bash
         working-directory: escooter-service
-        # Let's set the environment variable used by Flask App
-        run: poetry install
-      - name: Run unit tests
+        run: npm install
+      - name: Run the unit tests
         shell: bash
         working-directory: escooter-service
-        run: poetry run pytest
-      - name: Run the end to end test
+        run: npm test -- --watchAll=false
+      - name: Check that the service can run
         shell: bash
         working-directory: escooter-service
-        run: ./end-to-end-test.sh
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:5060
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
 
   Build-User-App:
     runs-on: ubuntu-latest
@@ -62,7 +53,7 @@ jobs:
         shell: bash
         working-directory: user-app
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
         shell: bash
         working-directory: user-app
         run: npm test -- --watchAll=false
@@ -76,10 +67,25 @@ jobs:
         shell: bash
         working-directory: company-dashboard
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
         shell: bash
         working-directory: company-dashboard
         run: npm test -- --watchAll=false
+      - name: Try the server
+        shell: bash
+        working-directory: company-dashboard
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:5200
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
 
   Build-Account-Service:
     runs-on: ubuntu-latest
@@ -90,7 +96,11 @@ jobs:
         working-directory: account-service
         shell: bash
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
+        shell: bash
+        working-directory: account-service
+        run: npm test -- --watchAll=false
+      - name: Try the server
         shell: bash
         working-directory: account-service
         # There are no tests yet, so let's just make sure that the server starts
@@ -115,7 +125,11 @@ jobs:
         working-directory: renting-service
         shell: bash
         run: npm install
-      - name: Run the tests
+      - name: Run the unit tests
+        shell: bash
+        working-directory: renting-service
+        run: npm test -- --watchAll=false
+      - name: Try the server
         shell: bash
         working-directory: renting-service
         # There are no tests yet, so let's just make sure that the server starts
@@ -126,12 +140,36 @@ jobs:
           # Wait some time for the server to be up and running
           sleep 5
           # Check that there is some reply
-          curl -sL http://127.0.0.1:3000
+          curl -sL http://127.0.0.1:5070
           # There has been no error, shut down the server
           # (it is a graceful shutdown, "kill" sends a TERM signal by default)
           kill $PID
 
-  Build-Agent:
+  Build-Escooter-Agent-Simple:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install all dependencies
+        working-directory: escooter-agent-simple
+        shell: bash
+        run: npm install
+      - name: Run the unit tests
+        shell: bash
+        working-directory: escooter-agent-simple
+        run: npm test -- --watchAll=false
+      - name: Try the server
+        shell: bash
+        working-directory: escooter-agent-simple
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          PID="$( echo $! )"
+          sleep 5
+          curl -sL http://127.0.0.1:5100
+          kill $PID
+
+  Build-Escooter-Agent:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -159,32 +197,28 @@ jobs:
 
   Integration-Testing:
     needs:
-      - Build-Backend
+      - Build-Escooter-Service
       - Build-User-App
       - Build-Company-Dashboard
-      - Build-Agent
+      - Build-Escooter-Agent
+      - Build-Escooter-Agent-Simple
       - Build-Account-Service
       - Build-Renting-Service
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
-      - name: Containerize the backend
-        run: docker build -t escooter-service escooter-service
-      - name: Containerize the account service
-        run: docker build -t account-service account-service
-      - name: Containerize the renting service
-        run: docker build -t renting-service renting-service
-      - name: Containerize the scooter agent
-        run: docker build -t escooter-agent escooter-agent
-      - name: Prepare the frontend
-        working-directory: user-app
-        run: npm install
-      - name: Prepare the dashboard
-        working-directory: company-dashboard
-        run: npm install
-      - name: Run the integration test
-        run: true # Start the backend, start the agents, perform some interactions
+      - name: Launch docker-compose
+        run: |
+          docker-compose up &
+          PID="$( echo $! )"
+          sleep 60
+          curl -sL http://127.0.0.1:5050
+          curl -sL http://127.0.0.1:5060
+          curl -sL http://127.0.0.1:5070
+          curl -sL http://127.0.0.1:5100
+          curl -sL http://127.0.0.1:5200
+          kill $PID
 
   Deploy:
     needs:
@@ -208,6 +242,10 @@ jobs:
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest renting-service
       - name: Containerize the escooter agent
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest escooter-agent
+      - name: Containerize the escooter agent simple
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent-simple:latest escooter-agent-simple
+      - name: Containerize the company dashboard
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-company-dashboard:latest company-dashboard
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver images on registry
@@ -216,3 +254,5 @@ jobs:
           docker push ghcr.io/danysk/dtm-se-escooter-example-account-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-renting-service:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent-simple:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-company-dashboard:latest

@@ -1,10 +1,11 @@
 {
-  "name": "escooter agent",
-  "version": "1.0.0",
+  "name": "escooter agent (simple)",
+  "version": "0.1.0",
   "description": "DTM wrap-up project - escooter agent",
   "main": "escooter-agent.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node escooter-agent.js",
+    "test": "echo \"WARNING: no unit test specified\""
   },
   "dependencies": {
     "axios": "^0.21.4",
