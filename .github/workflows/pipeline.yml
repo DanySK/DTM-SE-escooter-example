@@ -57,6 +57,21 @@ jobs:
         shell: bash
         working-directory: user-app
         run: npm test -- --watchAll=false
+      - name: Try the server
+        shell: bash
+        working-directory: user-app
+        # There are no tests yet, so let's just make sure that the server starts
+        run: | # This is YAML for multiline strings
+          npm start &
+          # Get the Process ID of the server
+          PID="$( echo $! )"
+          # Wait some time for the server to be up and running
+          sleep 5
+          # Check that there is some reply
+          curl -sL http://127.0.0.1:5300
+          # There has been no error, shut down the server
+          # (it is a graceful shutdown, "kill" sends a TERM signal by default)
+          kill $PID
 
   Build-Company-Dashboard:
     runs-on: ubuntu-latest
@@ -218,6 +233,7 @@ jobs:
           curl -sL http://127.0.0.1:5070
           curl -sL http://127.0.0.1:5100
           curl -sL http://127.0.0.1:5200
+          curl -sL http://127.0.0.1:5300
           kill $PID
 
   Deploy:
@@ -246,6 +262,8 @@ jobs:
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-agent-simple:latest escooter-agent-simple
       - name: Containerize the company dashboard
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-company-dashboard:latest company-dashboard
+      - name: Containerize the user app
+        run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-user-app:latest user-app
       - name: Login to the container registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
       - name: Deliver images on registry
@@ -256,3 +274,4 @@ jobs:
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-escooter-agent-simple:latest
           docker push ghcr.io/danysk/dtm-se-escooter-example-company-dashboard:latest
+          docker push ghcr.io/danysk/dtm-se-escooter-example-user-app:latest

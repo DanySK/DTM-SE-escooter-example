@@ -1,5 +1,5 @@
 {
-  "name": "Renting service",
+  "name": "renting-service",
   "version": "0.1.0",
   "description": "DTM wrap-up project - renting service",
   "main": "renting-service.js",

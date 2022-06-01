@@ -1,5 +1,5 @@
 {
-  "name": "escooter agent (simple)",
+  "name": "escooter-agent-simple",
   "version": "0.1.0",
   "description": "DTM wrap-up project - escooter agent",
   "main": "escooter-agent.js",
