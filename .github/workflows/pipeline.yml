@@ -115,6 +115,8 @@ jobs:
       - test-renting-service
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
       - name: Containerize account service
         run: docker build account-service -t account-service
 
