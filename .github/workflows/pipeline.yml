@@ -117,10 +117,21 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3.0.2
-      - name: Containerize account service
-        run: docker build account-service -t account-service
-      - name: Containerize the company dashboard
-        run: docker build company-dashboard -t company-dashboard
+      - name: Run the whole system
+        run: |
+          docker-compose up &
+          PID="$( echo $! )"
+          sleep 120
+          curl -sL "http://localhost:5050"
+          curl -sL "http://localhost:5060"
+          curl -sL "http://localhost:5070"
+          curl -sL "http://localhost:5100"
+          curl -sL "http://localhost:5101"
+          curl -sL "http://localhost:5102"
+          curl -sL "http://localhost:5103"
+          curl -sL "http://localhost:5104"
+          curl -sL "http://localhost:5200"
+          kill "$PID"
 
   deployment:
     needs:
