@@ -110,12 +110,13 @@ jobs:
     needs:
       - test-account-service
       - test-company-dashboard
+      - test-escooter-agent-simple
       - test-escooter-service
-      - test-escooter-simple-agent
+      - test-renting-service
     runs-on: ubuntu-latest
     steps:
       - run: true
-    
+
   deployment:
     needs:
       - integration-testing
