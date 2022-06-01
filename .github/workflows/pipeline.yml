@@ -115,7 +115,8 @@ jobs:
       - test-renting-service
     runs-on: ubuntu-latest
     steps:
-      - run: true
+      - name: Containerize account service
+        run: docker build account-service -t account-service
 
   deployment:
     needs:
