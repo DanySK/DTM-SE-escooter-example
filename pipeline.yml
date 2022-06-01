@@ -13,6 +13,47 @@ jobs:
       - name: Install the dependencies
         working-directory: account-service
         run: npm install 
+      - name: Unit testing
       - name: Launch the service
         working-directory: account-service
         run: 
+          npm start &
+          PID = "$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5050/"
+          kill "$PID"
+
+jobs:
+  test-escooter-service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3.0.2
+      - name: Install the dependencies
+        working-directory: escooter-service
+        run: npm install 
+      - name: Unit testing
+      - name: Launch the service
+        working-directory: escooter-service
+        run: 
+          npm start &
+          PID = "$( echo $! )"
+          sleep 5
+          curl -sL "http://localhost:5060/"
+          kill "$PID"
+
+  integration-testing:
+    needs:
+      - test-account-service
+      - test-escooter-service
+      runs-on: ubuntu-latest
+      steps:
+        - run: true
+
+    deployment:
+    needs:
+      - integration-testing
+      runs-on: ubuntu-latest
+      steps:
+        - run: true
+
