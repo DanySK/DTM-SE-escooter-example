@@ -195,7 +195,7 @@ jobs:
         working-directory: escooter-agent
         run: echo "::set-output name=version::$(cat .python-version)"
       - name: Install Python
-        uses: actions/setup-python@v3.1.2
+        uses: actions/setup-python@v4.0.0
         with:
           python-version: ${{ steps.python-version.outputs.version }}
       - name: Install Poetry
