@@ -1,5 +1,5 @@
 # Start from a lightweight container with just sh and python
-FROM python:3.10.9-alpine
+FROM python:3.11.1-alpine
 # Install CURL
 RUN apk update
 RUN apk add curl
