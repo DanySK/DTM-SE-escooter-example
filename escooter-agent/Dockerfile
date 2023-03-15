@@ -4,7 +4,7 @@ FROM python:3.11.2-alpine
 RUN apk update
 RUN apk add curl
 # Install our build system Poetry
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+RUN curl -sSL https://install.python-poetry.org | python -
 # Make the poetry executable available
 ENV PATH="/root/.poetry/bin:${PATH}"
 # Copy the program files
