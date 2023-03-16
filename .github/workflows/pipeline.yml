@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest # Pick a Linux machine
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install all dependencies
         shell: bash
         working-directory: escooter-service
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install all dependencies
         shell: bash
         working-directory: user-app
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install all dependencies
         shell: bash
         working-directory: company-dashboard
@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install all dependencies
         working-directory: account-service
         shell: bash
@@ -135,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install all dependencies
         working-directory: renting-service
         shell: bash
@@ -164,7 +164,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install all dependencies
         working-directory: escooter-agent-simple
         shell: bash
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Read the version of Python
         id: python-version
         shell: bash
@@ -222,7 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Launch docker-compose
         run: |
           docker-compose up &
@@ -249,7 +249,7 @@ jobs:
         && contains(github.ref, 'master')
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Containerize the backend
         run: docker build -t ghcr.io/danysk/dtm-se-escooter-example-escooter-service:latest escooter-service
       - name: Containerize the account service
