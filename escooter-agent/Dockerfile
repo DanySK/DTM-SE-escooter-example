@@ -6,7 +6,7 @@ RUN apk add curl
 # Install our build system Poetry
 RUN curl -sSL https://install.python-poetry.org | python -
 # Make the poetry executable available
-ENV PATH="/root/.poetry/bin:${PATH}"
+ENV PATH="/root/.local/bin:${PATH}"
 # Copy the program files
 WORKDIR /root
 COPY it/ it/
